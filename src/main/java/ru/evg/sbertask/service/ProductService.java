@@ -1,7 +1,5 @@
 package ru.evg.sbertask.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.evg.sbertask.entity.Product;
 import ru.evg.sbertask.exception.BadRequestException;
@@ -9,7 +7,6 @@ import ru.evg.sbertask.exception.ResourceNotFoundException;
 import ru.evg.sbertask.repository.ProductRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
