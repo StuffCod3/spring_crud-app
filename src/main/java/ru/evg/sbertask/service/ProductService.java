@@ -1,5 +1,7 @@
 package ru.evg.sbertask.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.evg.sbertask.entity.Product;
 import ru.evg.sbertask.repository.ProductRepository;
@@ -10,13 +12,19 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     public List<Product> getAllProducts(){
-        return productRepository.findAll();
+        List<Product> list = productRepository.findAll();
+        logger.info("!Вывод всех продуктов!");
+        for (Product p : list){
+            logger.info(p.toString());
+        }
+        return list;
     }
 
     public Product getById(Long id){
@@ -24,16 +32,24 @@ public class ProductService {
     }
 
     public Product createProduct(Product product){
-        return productRepository.save(product);
+        try {
+            logger.info("Продукт создан {}", product.toString());
+            return productRepository.save(product);
+        } catch (Exception e){
+            logger.error("Ошибка создания подукта {}", e.getMessage());
+            return null;
+        }
     }
 
     public Product updateProduct(Long id, Product product){
         Optional<Product> existProduct = productRepository.findById(id);
         if (existProduct.isPresent()){
             product.setId(id);
+            logger.info("Продукт обновлен {}", product.toString());
             return productRepository.save(product);
         } else {
-            throw new RuntimeException("Нет такого продукта");
+            logger.warn("Не удалось обновить, продукт с id {} не найден", id);
+            return null;
         }
     }
 
@@ -42,7 +58,7 @@ public class ProductService {
         if (existProduct.isPresent()){
             productRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Нет такого продукта");
+            logger.warn("Не удалось удалить, продукт с id {} не найден", id);
         }
     }
 }
