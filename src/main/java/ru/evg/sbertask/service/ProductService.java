@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.evg.sbertask.entity.Product;
+import ru.evg.sbertask.exception.BadRequestException;
+import ru.evg.sbertask.exception.ResourceNotFoundException;
 import ru.evg.sbertask.repository.ProductRepository;
 
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -20,45 +21,37 @@ public class ProductService {
 
     public List<Product> getAllProducts(){
         List<Product> list = productRepository.findAll();
-        logger.info("!Вывод всех продуктов!");
-        for (Product p : list){
-            logger.info(p.toString());
+        if (list.isEmpty()){
+            throw new ResourceNotFoundException("Нет продуктов");
         }
         return list;
     }
 
     public Product getById(Long id){
-        return productRepository.findById(id).orElse(null);
+        return productRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Продукт с id: " + id + " не найден"));
     }
 
     public Product createProduct(Product product){
-        try {
-            logger.info("Продукт создан {}", product.toString());
-            return productRepository.save(product);
-        } catch (Exception e){
-            logger.error("Ошибка создания подукта {}", e.getMessage());
-            return null;
+        if (product.getName() == null || product.getDescription() == null || product.getPrice() == null){
+            throw new BadRequestException("Поля не должны быть пустыми");
         }
+        return productRepository.save(product);
     }
 
     public Product updateProduct(Long id, Product product){
-        Optional<Product> existProduct = productRepository.findById(id);
-        if (existProduct.isPresent()){
-            product.setId(id);
-            logger.info("Продукт обновлен {}", product.toString());
-            return productRepository.save(product);
-        } else {
-            logger.warn("Не удалось обновить, продукт с id {} не найден", id);
-            return null;
-        }
+        Product existProduct = productRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Продукт с id: " + id + " не найден"));
+        existProduct.setName(product.getName());
+        existProduct.setPrice(product.getPrice());
+        existProduct.setDescription(product.getDescription());
+        return productRepository.save(existProduct);
     }
 
     public void deleteProduct(Long id){
-        Optional<Product> existProduct = productRepository.findById(id);
-        if (existProduct.isPresent()){
-            productRepository.deleteById(id);
-        } else {
-            logger.warn("Не удалось удалить, продукт с id {} не найден", id);
-        }
+        Product existProduct = productRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Продукт с id: " + id + " не найден"));
+
+        productRepository.delete(existProduct);
     }
 }
