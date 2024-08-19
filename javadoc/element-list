@@ -1,0 +1,6 @@
+ru.evg.sbertask
+ru.evg.sbertask.controller
+ru.evg.sbertask.entity
+ru.evg.sbertask.exception
+ru.evg.sbertask.repository
+ru.evg.sbertask.service

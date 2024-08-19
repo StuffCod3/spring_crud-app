@@ -5,6 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+/**
+ * Сущность продукта.
+ * Этот класс представляет продукт с его атрибутами, такими как идентификатор, имя, описание и цена.
+ * Он используется для взаимодействия с базой данных через JPA.
+ */
 @Entity
 public class Product {
 

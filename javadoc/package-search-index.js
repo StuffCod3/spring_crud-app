@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.evg.sbertask"},{"l":"ru.evg.sbertask.controller"},{"l":"ru.evg.sbertask.entity"},{"l":"ru.evg.sbertask.exception"},{"l":"ru.evg.sbertask.repository"},{"l":"ru.evg.sbertask.service"}];updateSearchResults();
